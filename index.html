@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Playful Edging Timer ❤︎</title>
+    <style>
+        body {
+            background: #ffeff7;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background: #fff0f6;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(255, 192, 203, 0.3);
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            margin: 20px;
+            overflow: hidden;
+            flex-direction: column;
+            justify-content: space-between; /* Distribute space between elements */
+            position: relative; /* For absolute positioning if needed */
+        }
+
+        h1 {
+            color: #ff69b4;
+            margin-bottom: 25px;
+            font-size: 2.2em;
+            text-shadow: 2px 2px 0px #ffffff;
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        label {
+            color: #ff85c0;
+            font-size: 1.2em;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input {
+            font-size: 1.3em;
+            padding: 8px 15px;
+            border: 3px solid #ffb3d9;
+            border-radius: 15px;
+            width: 120px;
+            text-align: center;
+            background: #fff9fb;
+            color: #ff69b4;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        button {
+            background: #ff69b4;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.4em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
+            white-space: nowrap;
+        }
+
+        button:hover {
+            background: #ff85c0;
+            transform: scale(1.05);
+        }
+
+        #toggleView {
+            opacity: 0;
+            transform: translateX(20px);
+            width: 0;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        #toggleView.visible {
+            opacity: 1;
+            transform: translateX(0);
+            width: auto;
+            padding: 15px 30px;
+            margin: 0 10px;
+        }
+
+        .timer {
+            font-size: 3em;
+            color: #ff69b4;
+            margin: 25px 0;
+            font-weight: bold;
+            text-shadow: 2px 2px 0px #ffffff;
+            display: none;
+        }
+
+        .loading-container {
+            position: relative;
+            margin: 40px 0 20px;
+            min-height: 100px;
+        }
+
+        .loading-animation {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #ffb3d9;
+            border-top-color: #ff69b4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        .teasing-messages {
+            margin-top: 20px;
+            font-size: 1em;
+            font-weight: bold;
+            min-height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .teasing-messages span {
+            display: none;
+            position: absolute;
+            animation: textFade 4s infinite;
+            font-family: inherit;
+        }
+
+        .teasing-messages span.active {
+            display: block;
+        }
+
+        .standout-text {
+            font-size: 1.6em;
+            background: linear-gradient(45deg, #ff69b4, #ff1493);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse 5s infinite;
+        }
+
+        .surprise-message {
+            color: #ff85c0;
+            font-size: 1.2em;
+            margin-top: 15px;
+            font-style: italic;
+            opacity: 0;
+            transition: opacity 1s ease;
+            min-height: 24px;
+        }
+
+        .visible {
+            opacity: 1;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes textFade {
+            0%, 100% { opacity: 0; }
+            20%, 80% { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .hidden-button {
+            opacity: 0;
+            width: 0;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .footer-label {
+            font-family: Helvetica;
+            font-size: 1em; /* Small text size */
+            color: #ff85c0; /* Soft pink color */
+            border-top: 1px solid #ffb3d9; /* Optional: Add a subtle border */
+            border-bottom: 1px solid #ffb3d9; /* Optional: Add a subtle border */
+            padding-bottom: 15px;
+            text-align: center; /* Center the text */
+            animation: typing 4s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        .footer-label div {
+            animation: fadeIn 1s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="gameControls" style="display: none">
+            <h1>Playtime Countdown ❤︎</h1>
+            
+            <div class="input-group">
+                <label for="maxDuration">Maximum Minutes:</label>
+                <input type="number" id="maxDuration" min="5" value="30" step="1">
+            </div>
+
+            <div class="button-container">
+                <button id="startBtn">Let's Begin ❤︎</button>
+                <button id="toggleView">Peek~</button>
+            </div>
+
+            <div class="loading-container" id="loadingContainer" style="display: none;">
+                <div class="loading-animation"></div>
+                <div class="teasing-messages" id="teasingMessages">
+                </div>
+            </div>
+
+            <div class="timer" id="timerDisplay">00:00</div>
+            <div class="surprise-message" id="surpriseMessage"></div>
+        </div>
+
+        <div class="footer-label" id="footerLabel">
+            <div id="firstRuleSet">
+                <p>Oh, <i>darling</i>, let me whisper <b>the rules</b> into your ear, like a succubus weaving her spell around your very soul. You’re about to embark on a delicious game of <b>pleasure</b> and <b>denial</b>, where every second teases your senses and every rule bends your will to mine.</p>
+                <p>Listen closely, my sweet, for this is how we’ll play:</p>
+
+                <button id="showRulesBtn"><i>I'll be a good girl.</i><br/>Please show me the rules.</button>
+            </div>
+            <div id="secondRuleSet" style="display: none">
+                <p><b>Rule #1 (Edging):</b><br/>
+                No orgasm until you hear the ascending tone.
+                That sweet, rising chime will be your permission to let go, to finally release all that delicious tension you’ve been building. But until then, my love, you’ll stay on the edge, trembling and desperate, savoring every moment of anticipation. Can you hold on? Or will you break before the tone sets you free?</p>
+                <p><b>Rule #2 (Denial):</b><br/>
+                If you hear the descending tone, you must <b>stop</b> for a full hour.<br/>
+                Oh, how cruel, isn’t it? That low, sinking sound will be your punishment for craving too much, too soon. You’ll have to sit with the ache, the longing, the unbearable need—until the hour is up. But don’t worry, my pet, the denial will only make the next round sweeter.</p>
+                <p><b>How It Works:</b><br/>
+                A random time is chosen between 5 minutes and the maximum you decide. When the timer runs out, the alarm will sound. Then, it’s a 50/50 chance—will you hear the ascending tone and finally be <b>allowed to cum</b>? Or will the descending tone force you to stop, leaving you <b>trembling</b> and <b>denied</b>?<br/>
+                This is the magic of Intermittent Reinforcement, my darling. Each time you play, the uncertainty, the teasing, the delicious agony of not knowing—it trains your brain to crave <i>anticipation</i> over release.</p>
+                <p><b>The Sounds:</b><br/>
+                <b>Ascending Tone (440Hz to 1760Hz):</b><br/>
+                A rising, euphoric chime that grants you permission to cum. Let it wash over you, my sweet, and surrender to the pleasure.<br/>
+                <b>Descending Tone (880Hz to 220Hz):</b><br/>
+                A sinking, taunting sound that forces you to stop. It’s my way of reminding you who’s in control, my pet.</p>
+                <p><b>Why This Works:</b><br/>
+                This game is about learning how to experience the <i>ultimate</i> pleasure. The randomness, the teasing, the denial—it all works together to rewire your brain.</p>
+                <p><b>So, my darling, are you ready to play?</b> Will you let me take control, to tease and deny you until you’re begging for more? Or will you resist, only to find yourself craving the game even more?</p>
+
+                <p>The choice is yours… but once you start, there’s no turning back.</p>
+
+                <p><button id="showGameControlsBtn">Proceed ❤</button></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let timer;
+        let endTime;
+        let audioContext;
+        let isHidden = true;
+        let messageIndex = 0;
+        let messageInterval;
+        let canFinish; // New variable to track if user can finish
+        let finished = false;
+
+        const phrases = [
+            "Any moment now❤︎",
+            "Just a little more~",
+            "Patience is sweet~",
+            "Almost there... maybe~",
+            "Teasing you gently~",
+            "So close, yet so far~",
+            "Can you handle the wait?~",
+            "Just a tiny bit longer❤︎",
+            "The anticipation is delicious~",
+            "You're doing so well❤︎",
+            "Almost... but not quite~",
+            "Time flies when you're teased~",
+            "Hold on just a little longer~",
+            "The best is yet to come~",
+            "You're so good at waiting~",
+            "Just a few more moments~",
+            "The wait makes it sweeter~",
+            "You're almost there~",
+            "Teasing is an art, isn't it?~",
+            "Can you feel it building?~",
+            "Just a little more patience~",
+            "The tension is exquisite~",
+            "You're doing amazing~",
+            "Almost time... but not yet~",
+            "The wait is most of the fun~",
+            "The ache of anticipation is always rewarded.",
+            "Let it play out~",
+            "Sink into the moment, where time doesn't tick so loudly.",
+            "Feel the tension of almost",
+            "Sit with the ache of longing",
+            "Keep building that urge, good job❤︎",
+            "You're so patient, such a good girl❤︎",
+            "Take a deep breath for now.."
+        ];
+
+        // Initialize the messages
+        function initializeMessages() {
+            const teasingMessagesDiv = document.getElementById('teasingMessages');
+            teasingMessagesDiv.innerHTML = ''; // Clear existing content
+            
+            // Add a <span> for each phrase in the array
+            phrases.forEach(phrase => {
+                const span = document.createElement('span');
+                span.className = 'standout-text';
+                span.textContent = phrase + ' ';
+                teasingMessagesDiv.appendChild(span);
+            });
+        }
+
+        function cycleMessages() {
+            // Hide all messages
+            const messages = document.querySelectorAll('#teasingMessages span');
+            messages.forEach(msg => msg.classList.remove('active'));
+            
+            // Pick a new random message index, ensuring it's different from the current one
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * phrases.length);
+            } while (newIndex === messageIndex);
+            
+            messageIndex = newIndex;
+            
+            // Show the new random message
+            const newMessage = messages[messageIndex];
+            newMessage.classList.add('active');
+            
+            // Force restart the pulse animation
+            newMessage.style.animation = 'none'; // Turn off animation
+            void newMessage.offsetWidth; // Trigger reflow to reset the element
+            newMessage.style.animation = 'pulse 4s infinite'; // Restart animation
+        }
+
+        function createAlarm(canFinish) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            const now = audioContext.currentTime;
+            
+            // Set frequency based on whether user can finish
+            if (canFinish) {
+                oscillator.frequency.setValueAtTime(440, now);
+                oscillator.frequency.linearRampToValueAtTime(1760, now + 3);
+                oscillator.type = 'square';
+            } else {
+                oscillator.frequency.setValueAtTime(880, now);
+                oscillator.frequency.linearRampToValueAtTime(220, now + 3);
+                oscillator.type = 'sine';
+            }
+            
+            gainNode.gain.setValueAtTime(0, now);
+            gainNode.gain.linearRampToValueAtTime(0.5, now + 0.3);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, now + 3);
+            
+            oscillator.start();
+            oscillator.stop(now + 3); // Double duration
+        }
+
+        function updateDisplay() {
+            if (isHidden) {
+                document.getElementById('timerDisplay').style.display = 'none';
+                document.getElementById('loadingContainer').style.display = 'block';
+                return;
+            }
+            document.getElementById('timerDisplay').style.display = 'block';
+            document.getElementById('loadingContainer').style.display = 'none';
+            
+            const remaining = Math.max(0, endTime - Date.now());
+            const minutes = Math.floor(remaining / 60000);
+            const seconds = Math.floor((remaining % 60000) / 1000);
+            document.getElementById('timerDisplay').textContent = 
+                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+            if (finished) {
+                document.getElementById('toggleView').style.display = 'none';
+            }
+        }
+
+        function startTimer() {
+            // Reset initial states
+            document.getElementById('surpriseMessage').style.opacity = '0';
+            document.getElementById('loadingContainer').style.display = 'none';
+            document.getElementById('timerDisplay').style.display = 'none';
+            document.getElementById('footerLabel').style.display = 'none';
+
+            // Show peek button with animation
+            document.getElementById('startBtn').classList.add('hidden-button');
+            document.getElementById('toggleView').classList.remove('hidden-button');
+            document.getElementById('toggleView').classList.add('visible');
+
+            // 50/50 chance to determine if user can finish
+            canFinish = Math.random() < 0.5;
+
+            // Backdoor condition
+            const maxMinutes = parseInt(document.getElementById('maxDuration').value);
+            let duration;
+            if(maxMinutes === 999) {
+                duration = 10000; // 10 seconds
+            } else {
+                const minMs = 5 * 60000;
+                const maxMs = maxMinutes * 60000;
+                duration = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
+            }
+
+            endTime = Date.now() + duration;
+            
+            // Delayed message
+            setTimeout(() => {
+                document.getElementById('surpriseMessage').style.opacity = '1';
+            }, 3000 + Math.random() * 2000);
+
+            // Set up the interval to cycle messages every 3-5 seconds
+            messageInterval = setInterval(cycleMessages, 5000);
+
+            // Start the first cycle immediately
+            cycleMessages();
+
+
+            // Start timer logic
+            if (timer) clearInterval(timer);
+            timer = setInterval(() => {
+                if (Date.now() >= endTime) {
+                    clearInterval(timer);
+                    createAlarm(canFinish);
+                    document.getElementById('startBtn').disabled = false;
+                    document.getElementById('timerDisplay').textContent = "Time's Up!~";
+                    document.getElementById('surpriseMessage').textContent = canFinish 
+                        ? "Let it all out ❤︎" 
+                        : "Be a good girl and wait for next round~";
+                    document.getElementById('loadingContainer').style.display = 'none';
+                    finished = true;
+                } else {
+                    updateDisplay();
+                }
+            }, 1000);
+
+            document.getElementById('startBtn').disabled = true;
+            updateDisplay();
+        }
+
+        function showRules() {
+            document.getElementById('firstRuleSet').style.display = 'none';
+            document.getElementById('secondRuleSet').style.display = 'block';
+        }
+
+        function showGameControls() {
+            document.getElementById('footerLabel').style.display = 'none';
+            document.getElementById('gameControls').style.display = 'block';
+        }
+
+        // Event Listeners
+        document.getElementById('startBtn').addEventListener('click', startTimer);
+        document.getElementById('showRulesBtn').addEventListener('click', showRules);
+        document.getElementById('showGameControlsBtn').addEventListener('click', showGameControls);
+
+        document.getElementById('toggleView').addEventListener('click', () => {
+            isHidden = !isHidden;
+            updateDisplay();
+        });
+
+        // Initialize messages
+        const container = document.getElementById('teasingMessages');
+        phrases.forEach((phrase, index) => {
+            const span = document.createElement('span');
+            span.className = 'standout-text';
+            span.textContent = phrase;
+            span.style.animationDelay = `${index * 0.5}s`;
+            container.appendChild(span);
+        });
+
+        // Input validation
+        document.getElementById('maxDuration').addEventListener('input', function() {
+            this.value = Math.max(5, Math.min(999, parseInt(this.value) || 5));
+        });
+
+        // Initial setup
+        document.getElementById('toggleView').style.display = 'none';
+        setTimeout(() => {
+            document.getElementById('toggleView').style.display = 'inline-block';
+        }, 100);
+    </script>
+</body>
+</html>
