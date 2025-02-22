@@ -459,6 +459,9 @@
             const minMinutes = parseFloat(minMs);
             const maxMinutes = parseFloat(maxMs);
             const durationMs = (Math.random() * (maxMinutes - minMinutes) + minMinutes) * 60000;
+            if (window.location.hash == '#test') {
+                durationMs = 1000;
+            }
             endTime = Date.now() + durationMs;
             
             // Delayed message
