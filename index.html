@@ -297,10 +297,10 @@
         let finished = false;
 
         function getFailedMinutes() {
-          const m = parseFloat(document.cookie.replace(/(?:(?:^|.*;s*)failedMinutes=s*([^;]*).*$)|^.*$/, "$1")) || 0;
-          return m;
+            const value = document.cookie.replace(/(?:(?:^|.*;\s*)failedMinutes\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+            return value ? parseInt(value) || 0 : 0; // Ensures parsing with a fallback to prevent NaN
         }
-        
+
         function setFailedMinutes(m) {
           document.cookie = `failedMinutes=${m}; max-age=31536000; path=/`;
         }
