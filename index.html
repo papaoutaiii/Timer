@@ -223,9 +223,14 @@
             <h1>Playtime Countdown ❤︎</h1>
             
             <div class="input-group">
-                <label for="maxDuration">Maximum Minutes:</label>
-                <input type="number" id="maxDuration" min="5" value="30" step="1">
+              <label for="modeSelect">Session Type:</label>
+              <select id="modeSelect" style="font-size:1.3em; padding:8px 15px; border:3px solid #ffb3d9; border-radius:15px; background:#fff9fb; color:#ff69b4;">
+                <option value="5,15,0.11">Express (5–15 min)</option>
+                <option value="30,60,0.41">Quick Play (30–60 min)</option>
+                <option value="60,120,0.84">Self-Love Session (60–120 min)</option>
+              </select>
             </div>
+
 
             <div class="button-container">
                 <button id="startBtn">Let's Begin ❤︎</button>
@@ -284,6 +289,14 @@
         let messageInterval;
         let canFinish; // New variable to track if user can finish
         let finished = false;
+
+        function getFailures() {
+          return parseInt(document.cookie.replace(/(?:(?:^|.*;\s*)failures\s*\=\s*([^;]*).*$)|^.*$/, "$1")) || 0;
+        }
+
+        function setFailures(count) {
+          document.cookie = `failures=${count}; max-age=31536000; path=/`;
+        }
 
         const phrases = [
             "Any moment now❤︎",
@@ -359,6 +372,12 @@
         }
 
         function createAlarm(canFinish) {
+            if(!canFinish) {
+              setFailures(getFailures() + 1);
+            } else {
+              setFailures(0);
+            }
+
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
             const oscillator = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
@@ -407,6 +426,13 @@
             }
         }
 
+        function calculateWinProb() {
+          const [min, max, baseP] = document.getElementById('modeSelect').value.split(',').map(parseFloat);
+          const failures = getFailures();
+          const avgDuration = (min + max)/2;
+          return 1 - Math.pow(1 - baseP, (1 + failures/2)/(avgDuration/5));
+        }
+
         function startTimer() {
             // Reset initial states
             document.getElementById('surpriseMessage').style.opacity = '0';
@@ -419,19 +445,10 @@
             document.getElementById('toggleView').classList.remove('hidden-button');
             document.getElementById('toggleView').classList.add('visible');
 
-            // 50/50 chance to determine if user can finish
-            canFinish = Math.random() < 0.5;
-
-            // Backdoor condition
-            const maxMinutes = parseInt(document.getElementById('maxDuration').value);
-            let duration;
-            if(maxMinutes === 999) {
-                duration = 10000; // 10 seconds
-            } else {
-                const minMs = 5 * 60000;
-                const maxMs = maxMinutes * 60000;
-                duration = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
-            }
+            const [minMs, maxMs, baseP] = document.getElementById('modeSelect').value.split(',').map(parseFloat);
+            const winProb = calculateWinProb();
+            canFinish = Math.random() < winProb;
+            duration = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
 
             endTime = Date.now() + duration;
             
@@ -497,11 +514,6 @@
             span.textContent = phrase;
             span.style.animationDelay = `${index * 0.5}s`;
             container.appendChild(span);
-        });
-
-        // Input validation
-        document.getElementById('maxDuration').addEventListener('input', function() {
-            this.value = Math.max(5, Math.min(999, parseInt(this.value) || 5));
         });
 
         // Initial setup
