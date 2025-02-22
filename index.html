@@ -458,10 +458,8 @@
             duration = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
             const minMinutes = parseFloat(minMs);
             const maxMinutes = parseFloat(maxMs);
-            const durationMs = (Math.random() * (maxMinutes - minMinutes) + minMinutes) * 60000;
-            if (window.location.hash == '#test') {
-                durationMs = 1000;
-            }
+            // if #test then debug mode and duration is always 1 second for testing purposes
+            const durationMs = window.location.hash == '#test' ? 100) : (Math.random() * (maxMinutes - minMinutes) + minMinutes) * 60000;
             endTime = Date.now() + durationMs;
             
             // Delayed message
