@@ -453,6 +453,7 @@
 
             const [minMs, maxMs, baseP] = document.getElementById('modeSelect').value.split(',').map(v => parseFloat(v.trim()));
             const winProb = calculateWinProb();
+            console.log('winProb=' + winProb);
             canFinish = Math.random() < winProb;
             
             duration = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
