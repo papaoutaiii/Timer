@@ -287,8 +287,6 @@
     </div>
 
     <script>
-        .map(v => parseFloat(v.trim()));
-
         let timer;
         let endTime;
         let audioContext;
@@ -430,7 +428,7 @@
         }
 
         function calculateWinProb() {
-          const [min, max, baseP] = document.getElementById('modeSelect').value.split(',').map(parseFloat);
+          const [min, max, baseP] = document.getElementById('modeSelect').value.split(',').map(v => parseFloat(v.trim()));
           const failures = getFailures();
           const avgDuration = (min + max)/2;
           return 1 - Math.pow(1 - baseP, (1 + failures/2) / ((avgDuration)/10));
@@ -453,7 +451,7 @@
             document.getElementById('toggleView').classList.remove('hidden-button');
             document.getElementById('toggleView').classList.add('visible');
 
-            const [minMs, maxMs, baseP] = document.getElementById('modeSelect').value.split(',').map(parseFloat);
+            const [minMs, maxMs, baseP] = document.getElementById('modeSelect').value.split(',').map(v => parseFloat(v.trim()));
             const winProb = calculateWinProb();
             canFinish = Math.random() < winProb;
             
