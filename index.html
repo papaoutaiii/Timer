@@ -215,6 +215,12 @@
         .footer-label div {
             animation: fadeIn 1s ease-in-out;
         }
+
+        #modeSelect option {
+          background: #fff9fb;
+          color: #ff69b4;
+        }
+
     </style>
 </head>
 <body>
@@ -281,6 +287,8 @@
     </div>
 
     <script>
+        .map(v => parseFloat(v.trim()))
+
         let timer;
         let endTime;
         let audioContext;
@@ -372,12 +380,7 @@
         }
 
         function createAlarm(canFinish) {
-            if(!canFinish) {
-              setFailures(getFailures() + 1);
-            } else {
-              setFailures(0);
-            }
-
+            
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
             const oscillator = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
@@ -430,10 +433,15 @@
           const [min, max, baseP] = document.getElementById('modeSelect').value.split(',').map(parseFloat);
           const failures = getFailures();
           const avgDuration = (min + max)/2;
-          return 1 - Math.pow(1 - baseP, (1 + failures/2)/(avgDuration/5));
+          return 1 - Math.pow(1 - baseP, (1 + failures/2) / ((avgDuration)/10));
         }
 
         function startTimer() {
+            // Add to startTimer():
+            finished = false;
+            document.getElementById('toggleView').style.display = 'inline-block';
+            if(messageInterval) clearInterval(messageInterval);
+            
             // Reset initial states
             document.getElementById('surpriseMessage').style.opacity = '0';
             document.getElementById('loadingContainer').style.display = 'none';
@@ -448,9 +456,12 @@
             const [minMs, maxMs, baseP] = document.getElementById('modeSelect').value.split(',').map(parseFloat);
             const winProb = calculateWinProb();
             canFinish = Math.random() < winProb;
+            
             duration = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
-
-            endTime = Date.now() + duration;
+            const minMinutes = parseFloat(minMs);
+            const maxMinutes = parseFloat(maxMs);
+            const durationMs = (Math.random() * (maxMinutes - minMinutes) + minMinutes) * 60000;
+            endTime = Date.now() + durationMs;
             
             // Delayed message
             setTimeout(() => {
@@ -470,6 +481,11 @@
                 if (Date.now() >= endTime) {
                     clearInterval(timer);
                     createAlarm(canFinish);
+                    if(!canFinish) {
+                      setFailures(getFailures() + 1);
+                    } else {
+                      setFailures(0);
+                    }
                     document.getElementById('startBtn').disabled = false;
                     document.getElementById('timerDisplay').textContent = "Time's Up!~";
                     document.getElementById('surpriseMessage').textContent = canFinish 
