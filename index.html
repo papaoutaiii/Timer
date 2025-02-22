@@ -428,11 +428,11 @@
         }
 
         function calculateWinProb() {
-          const [min, max, baseP] = document.getElementById('modeSelect').value.split(',').map(v => parseFloat(v.trim()));
-          const failures = getFailures();
-          const avgDuration = (min + max)/2;
-          return 1 - Math.pow(1 - baseP, (1 + failures/2) / ((avgDuration)/10));
+            const [min, max, baseP] = document.getElementById('modeSelect').value.split(',').map(v => parseFloat(v.trim()));
+            const failures = getFailures();
+            return Math.min(baseP * (1 + 0.05 * failures), 0.95);
         }
+
 
         function startTimer() {
             // Add to startTimer():
@@ -456,7 +456,6 @@
             console.log('winProb=' + winProb);
             canFinish = Math.random() < winProb;
             
-            duration = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
             const minMinutes = parseFloat(minMs);
             const maxMinutes = parseFloat(maxMs);
             // if #test then debug mode and duration is always 1 second for testing purposes
