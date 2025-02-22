@@ -491,11 +491,6 @@
                 if (Date.now() >= endTime) {
                     clearInterval(timer);
                     createAlarm(canFinish);
-                    if(!canFinish) {
-                      setFailures(getFailures() + 1);
-                    } else {
-                      setFailures(0);
-                    }
                     document.getElementById('startBtn').disabled = false;
                     document.getElementById('timerDisplay').textContent = "Time's Up!~";
                     document.getElementById('surpriseMessage').textContent = canFinish 
