@@ -490,7 +490,7 @@
             timer = setInterval(() => {
                 if (Date.now() >= endTime) {
                     clearInterval(timer);
-                    createAlarm(canFinish);
+                    createAlarm(canFinish, Math.floor((endTime - Date.now()) / (1000 * 60)));
                     document.getElementById('startBtn').disabled = false;
                     document.getElementById('timerDisplay').textContent = "Time's Up!~";
                     document.getElementById('surpriseMessage').textContent = canFinish 
