@@ -484,13 +484,15 @@
             // Start the first cycle immediately
             cycleMessages();
 
-
+            let durationMinutes = Math.floor((endTime - Date.now()) / (1000 * 60));
+            
             // Start timer logic
             if (timer) clearInterval(timer);
             timer = setInterval(() => {
                 if (Date.now() >= endTime) {
                     clearInterval(timer);
-                    createAlarm(canFinish, Math.floor((endTime - Date.now()) / (1000 * 60)));
+                    console.log(durationMinutes);
+                    createAlarm(canFinish, durationMinutes);
                     document.getElementById('startBtn').disabled = false;
                     document.getElementById('timerDisplay').textContent = "Time's Up!~";
                     document.getElementById('surpriseMessage').textContent = canFinish 
