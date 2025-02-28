@@ -440,8 +440,7 @@
             const [min, max, baseP] = document.getElementById('modeSelect').value.split(',').map(v => parseFloat(v.trim()));
             const failedMinutes = getFailedMinutes();
             
-            // Adjust odds proportionally up to 60 failed minutes giving ~29% increase for Express
-            const adjustedOdds = baseP * (1 + (0.0454545 * Math.min(failedMinutes, 60)/60)); // 4.54545% per 10 minutes
+            const adjustedOdds = baseP * (1 + (0.0454545 * failedMinutes/45));
             return Math.min(adjustedOdds, 0.95); // Cap at 95%
         }
 
